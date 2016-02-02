@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
      */
 
 //测试push是不是真的能用了
+
     //    private ListView lv ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
