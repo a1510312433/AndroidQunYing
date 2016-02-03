@@ -12,22 +12,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    private ListView lv;
+    private MyListView lv;
+    private TextView txt;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
 
-//测试push是不是真的能用了
-
+    //测试push是不是真的能用了
     //    private ListView lv ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //        lv = (ListView)findViewById(R.id.listView);
-        lv = ((ListView) findViewById(R.id.listView));
+        lv = ((MyListView) findViewById(R.id.listView));
         lv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+
             public void onScroll(AbsListView view, int firstVisibleItem,
                                  int visibleItemCount, int totalItemCount) {
                 if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0) {
@@ -99,14 +104,42 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("firstposition" + lv.getFirstVisiblePosition());
             }
         });
-        lv.setAdapter(new myAdapter());
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        lists = new ArrayList<>();
+        for(int i=0;i<100;i++){
+            lists.add("listposition"+i);
+        }
+
+        final myAdapter adapter = new myAdapter(lists);
+
+        lv.setAdapter(adapter);
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(position == 1){
+                    lists.clear();
+                    adapter.notifyDataSetChanged();
+                }
+
+            }
+        });
+
+        txt = ((TextView) findViewById(R.id.text));
+        lv.setEmptyView(txt);
+        txt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i=0;i<100;i++){
+                    lists.add("listPosition"+i);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 
     int lastvisibleitemposition;
-
+    List<String> lists;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -129,34 +162,24 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-
-    }
 
     private class myAdapter extends BaseAdapter {
         LayoutInflater inflater;
-
-        public myAdapter() {
+        List<String> list;
+        public myAdapter(List<String> list) {
             inflater = LayoutInflater.from(MainActivity.this);
+            this.list = list;
         }
 
         @Override
         public int getCount() {
-            return 100;
+            if(list != null && list.size()>0){
+                return list.size();
+            }else{
+                return 0;
+            }
+
         }
 
         @Override
@@ -180,7 +203,14 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 holder = ((ViewHolder) convertView.getTag());
             }
-            holder.txt.setText("---" + position + "---");
+            if(position%2 == 0){
+                holder.txt.setBackgroundColor(0xffe63232);
+                holder.txt.setTextColor(0xffffffff);
+            }else{
+                holder.txt.setBackgroundColor(0xffffffff);
+                holder.txt.setTextColor(0xff000000);
+            }
+            holder.txt.setText("---" + position + "---"+list.get(position));
             return convertView;
         }
     }
