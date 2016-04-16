@@ -220,4 +220,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void testgit(){
+        //本方法只用于测试git
+    }
 }
